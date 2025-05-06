@@ -1,14 +1,17 @@
-package model;
+package modelo;
 
 public class Cliente {
     private String cedula;
     private String nombre;
-    private boolean estaVigente;
+    private boolean vigente;
 
-    public Cliente(String cedula, String nombre, boolean estaVigente) {
+    public Cliente(String cedula, String nombre, boolean vigente) {
         this.cedula = cedula;
         this.nombre = nombre;
-        this.estaVigente = estaVigente;
+        this.vigente = vigente;
+    }
+
+    public Cliente() {
     }
 
     public String getCedula() {
@@ -27,12 +30,12 @@ public class Cliente {
         this.nombre = nombre;
     }
 
-    public boolean isEstaVigente() {
-        return estaVigente;
+    public boolean isVigente() {
+        return vigente;
     }
 
-    public void setEstaVigente(boolean estaVigente) {
-        this.estaVigente = estaVigente;
+    public void setVigente(boolean estaVigente) {
+        this.vigente = estaVigente;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class Cliente {
         return "Cliente{" +
                 "cedula='" + cedula + '\'' +
                 ", nombre='" + nombre + '\'' +
-                ", estaVigente=" + estaVigente +
+                ", estaVigente=" + vigente +
                 '}';
     }
 }

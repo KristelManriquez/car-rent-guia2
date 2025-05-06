@@ -1,4 +1,4 @@
-package model;
+package modelo;
 
 public class Arriendo {
     private int numeroArriendo;
@@ -48,11 +48,11 @@ public class Arriendo {
 
     }
 
-    public int obtenerMontoAPagar() {
-        return 0;
+    public int obtenerMontoAPagar(int precioPorDia) {
+        return diasArriendo * precioPorDia;
     }
 
-    public boolean evaluarArriendo() {
-        return false;
+    public boolean evaluarArriendo(Cliente cliente, Vehiculo vehiculo) {
+        return cliente.isVigente() && vehiculo.getCondicion() == 'D';
     }
 }

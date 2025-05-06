@@ -1,4 +1,4 @@
-package model;
+package modelo;
 
 public class CuotaArriendo {
     private int numeroCuotas;
@@ -44,8 +44,17 @@ public class CuotaArriendo {
                 '}';
     }
 
+    // Arraylist [cuota1, cuota2, cuota3, cuota4]
+    // encontrar la forma de generar instancias para ir llenando el arraylist de cuotas dependiendo el número de cuotas pactadas (según cantCuotas en clase ArriendoCuotas
+    // recorrer el array y debe encontrar la cuota que quiere pagar el usuario (ciclo for)
+    // si por ejemplo, en la función ingresamos la cuota3, a esa cuota debe establecer el valor de fuePagada en true
+    // si no la encuentra, retorna false.
 
-    public boolean pagarCuota() {
+    public boolean pagarCuota(CuotaArriendo cuotaArriendo) {
+        if (!fuePagada) {
+            fuePagada = true;
+            return true;
+        }
         return false;
     }
 }
