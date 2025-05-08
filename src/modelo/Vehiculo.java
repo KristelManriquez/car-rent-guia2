@@ -32,6 +32,4 @@ public class Vehiculo {
                 ", condicion=" + condicion +
                 '}';
     }
-
-
 }

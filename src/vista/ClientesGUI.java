@@ -1,5 +1,7 @@
 package vista;
 
+import controlador.ClientesControlador;
+
 import javax.swing.*;
 
 public class ClientesGUI extends JFrame {
@@ -12,7 +14,7 @@ public class ClientesGUI extends JFrame {
     private JButton botonAgregar = new JButton("Agregar");
     private JLabel titulo = new JLabel("Clientes");
 
-    public ClientesGUI() {
+    public ClientesGUI(ClientesControlador controlador) {
         setTitle(titulo.getText());
         setSize(350, 450);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -42,7 +44,27 @@ public class ClientesGUI extends JFrame {
         botonAgregar.setBounds(150, 350, 100, 40);
         add(botonAgregar);
 
-        setVisible(true);
+        botonAgregar.addActionListener(e -> {
+            controlador.agregarCliente();
+            // Después de agregar, abrir la vista de arriendos con el controlador actualizado
+            ArriendosConCuotasGUI arriendosGUI = new ArriendosConCuotasGUI(controlador);
+            this.dispose();
+        });
 
+        setVisible(true);
+    }
+
+    public String getCedula() { return inputCedula.getText(); }
+    public String getNombre() { return inputNombre.getText(); }
+    public boolean isVigente() { return checkBoxEstaVigente.isSelected(); }
+
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
+    }
+
+    public void limpiarFormulario() {
+        inputCedula.setText("");
+        inputNombre.setText("");
+        checkBoxEstaVigente.setSelected(false);
     }
 }

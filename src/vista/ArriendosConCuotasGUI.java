@@ -1,5 +1,6 @@
 package vista;
 
+import controlador.ClientesControlador;
 import modelo.Cliente;
 
 import javax.swing.*;
@@ -39,7 +40,7 @@ public class ArriendosConCuotasGUI extends JFrame {
 
     private JButton btnPagar = new JButton("Pagar Primera Cuota");
 
-    public ArriendosConCuotasGUI() {
+    public ArriendosConCuotasGUI(ClientesControlador controlador) {
         setTitle("Arriendos con cuotas");
         setSize(750, 450);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -49,7 +50,7 @@ public class ArriendosConCuotasGUI extends JFrame {
         add(titulo);
 
         comboBoxClientes.setBounds(50, 60, 200, 25);
-        comboBoxClientes.addItem("Seleccione CLIENTE");
+        cargarClientes(controlador);
         add(comboBoxClientes);
 
         btnNuevoCliente.setBounds(50, 95, 200, 25);
@@ -99,5 +100,14 @@ public class ArriendosConCuotasGUI extends JFrame {
         add(btnPagar);
 
         setVisible(true);
+    }
+
+    private void cargarClientes(ClientesControlador controlador) {
+        comboBoxClientes.removeAllItems();
+        comboBoxClientes.addItem("Seleccione CLIENTE");
+
+        for (Cliente cliente : controlador.getClientes()) {
+            comboBoxClientes.addItem(cliente.getNombre() + " - " + cliente.getCedula());
+        }
     }
 }

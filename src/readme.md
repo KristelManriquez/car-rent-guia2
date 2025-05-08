@@ -7,6 +7,9 @@ días por el precio diario. Este precio lo indica el usuario una vez que se ingr
 esté vigente y que el vehículo de este mismo arriendo tenga condición D (disponible). El método retorna un true (si
 está ok) o false (si no es posible arrendar). (clase Arriendo - JOACO)
 
+✓ Después que el usuario agrega un cliente debe agregarlo al arraylist y archivo correspondiente y retornar a la interfaz de
+Arriendo con Cuotas (Interacción con Interfaz Clientes - Kristel)
+
 TODO
 c) Generar cuotas del arriendo: operación que se ejecuta al guardar un arriendo exitoso al sistema, que recibe el precio
 por día del arriendo y crea las cuotas según la siguiente especificación:
@@ -32,12 +35,10 @@ a) Las validaciones de los atributos que se implementan en los mutadores, se deb
 en la clase respectiva. Estas validaciones se ejecutan en el momento de actualizar (setear) el objeto, por lo tanto,
 debe considerar, además, que los datos ingresados por el usuario (en el caso que corresponda) y que son ocupados
 para instanciar los objetos, podrán ser validados usando estos mismas métodos. (Todas las clases - KENNY)
+Agregar validaciones de Setters, en clase Cliente, se debe agregar validación de cedula (KENNY - ver en trabajo anterior)
 
 b) Para que los objetos del sistema entreguen al usuario los diversos mensajes generados por el sistema, programar en
 cada clase un método que reciba el string con el mensaje, el tipo de mensaje y genere la salida. (todas las clases - KENNY)
-
-Después que el usuario agrega un cliente debe agregarlo al arraylist y archivo correspondiente y retornar a la interfaz de
-Arriendo con Cuotas (Interacción con Interfaz Clientes - Kristel)
 
 La interfaz principal no se representa en el diagrama, por lo tanto, usted debe diseñarla y programarla considerando al
 menos lo siguiente:
