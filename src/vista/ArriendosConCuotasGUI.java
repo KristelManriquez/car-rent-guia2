@@ -4,6 +4,7 @@ import controlador.ClientesControlador;
 import modelo.Cliente;
 
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
 import java.util.ArrayList;
 
 public class ArriendosConCuotasGUI extends JFrame {
@@ -17,7 +18,8 @@ public class ArriendosConCuotasGUI extends JFrame {
     private JButton btnNuevoCliente = new JButton("Ingresar nuevo Cliente");
 
     private JLabel lblFecha = new JLabel("Fecha Arriendo:");
-    private JTextField txtFecha = new JTextField();
+    SpinnerDateModel modeloFecha = new SpinnerDateModel();
+    JSpinner spinnerFecha = new JSpinner(modeloFecha);
 
     private JLabel lblDias = new JLabel("Días:");
     private JTextField txtDias = new JTextField();
@@ -25,13 +27,13 @@ public class ArriendosConCuotasGUI extends JFrame {
     private JLabel lblPrecio = new JLabel("Precio por día:");
     private JTextField txtPrecio = new JTextField();
 
-    private JLabel lblMonto = new JLabel("MONTO A PAGAR:");
+    private JLabel lblMonto = new JLabel("Monto a pagar:");
     private JTextField txtMonto = new JTextField();
 
     private JLabel lblCuotas = new JLabel("Cantidad de cuotas:");
     private JTextField txtCuotas = new JTextField();
 
-    private JButton btnGuardar = new JButton("Guardar arriendo y mostrar  cuotas >>");
+    private JButton btnGuardar = new JButton("Guardar arriendo y mostrar cuotas >>");
 
     private JLabel lblCuotasAPagar = new JLabel("CUOTAS A PAGAR");
 
@@ -40,7 +42,11 @@ public class ArriendosConCuotasGUI extends JFrame {
 
     private JButton btnPagar = new JButton("Pagar Primera Cuota");
 
-    public ArriendosConCuotasGUI(ClientesControlador controlador) {
+    //Controlador global
+    ClientesControlador controlador = new ClientesControlador();
+
+
+    public ArriendosConCuotasGUI() {
         setTitle("Arriendos con cuotas");
         setSize(750, 450);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -50,10 +56,11 @@ public class ArriendosConCuotasGUI extends JFrame {
         add(titulo);
 
         comboBoxClientes.setBounds(50, 60, 200, 25);
-        cargarClientes(controlador);
+        cargarClientes();
         add(comboBoxClientes);
 
         btnNuevoCliente.setBounds(50, 95, 200, 25);
+        btnNuevoCliente.addActionListener(el -> this.abrirClientesGUI());
         add(btnNuevoCliente);
 
         comboBoxAutomovil.setBounds(280, 60, 200, 25);
@@ -61,17 +68,30 @@ public class ArriendosConCuotasGUI extends JFrame {
         add(comboBoxAutomovil);
 
         lblFecha.setBounds(50, 150, 100, 20);
-        txtFecha.setBounds(150, 150, 100, 20);
+        spinnerFecha.setBounds(150, 150, 100, 20);
         add(lblFecha);
-        add(txtFecha);
+        add(spinnerFecha);
 
         lblDias.setBounds(50, 180, 100, 20);
         txtDias.setBounds(150, 180, 50, 20);
+        txtDias.getDocument().addDocumentListener(new DocumentListenerCustom() {
+            @Override
+            public void onChange() {
+                mostrarMontoAPagar();
+            }
+        });
         add(lblDias);
         add(txtDias);
 
+
         lblPrecio.setBounds(50, 210, 100, 20);
         txtPrecio.setBounds(150, 210, 100, 20);
+        txtPrecio.getDocument().addDocumentListener(new DocumentListenerCustom() {
+            @Override
+            public void onChange() {
+                mostrarMontoAPagar();
+            }
+        });
         add(lblPrecio);
         add(txtPrecio);
 
@@ -102,12 +122,27 @@ public class ArriendosConCuotasGUI extends JFrame {
         setVisible(true);
     }
 
-    private void cargarClientes(ClientesControlador controlador) {
+    private void cargarClientes() {
         comboBoxClientes.removeAllItems();
         comboBoxClientes.addItem("Seleccione CLIENTE");
 
         for (Cliente cliente : controlador.getClientes()) {
             comboBoxClientes.addItem(cliente.getNombre() + " - " + cliente.getCedula());
         }
+    }
+
+    public void actualizarClientes() {
+        cargarClientes();
+    }
+
+    private void abrirClientesGUI() {
+        ClientesGUI clientesGUI = new ClientesGUI(controlador, this);
+        clientesGUI.setVisible(true);
+    }
+
+    private void mostrarMontoAPagar() {
+        double precio = Double.parseDouble(txtPrecio.getText().isEmpty() ? "0" : txtPrecio.getText());
+        double dias = Double.parseDouble(txtDias.getText().isEmpty() ? "0" : txtDias.getText());
+        txtMonto.setText(String.valueOf(dias * precio));
     }
 }

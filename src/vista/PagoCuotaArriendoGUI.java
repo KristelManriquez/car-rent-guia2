@@ -13,7 +13,7 @@ public class PagoCuotaArriendoGUI extends JFrame {
         setTitle("PAGAR CUOTAS ARRIENDOS");
         setSize(600, 400);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
 
         // ComboBox de clientes

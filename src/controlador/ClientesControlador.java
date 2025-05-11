@@ -23,18 +23,12 @@ public class ClientesControlador {
         this.vista = vista;
     }
 
-    public void agregarCliente() {
-        String cedula = vista.getCedula();
-        String nombre = vista.getNombre();
-        boolean vigente = vista.isVigente();
-
-        if (cedula.isEmpty() || nombre.isEmpty()) {
+    public void agregarCliente(Cliente cliente) {
+        if (cliente.getCedula().isEmpty() || cliente.getNombre().isEmpty()) {
             vista.mostrarMensaje("Por favor, complete todos los campos.");
             return;
         }
-
-        Cliente nuevoCliente = new Cliente(cedula, nombre, vigente);
-        listaClientes.add(nuevoCliente);
+        listaClientes.add(cliente);
         vista.mostrarMensaje("Cliente agregado con éxito.");
         vista.limpiarFormulario();
     }
