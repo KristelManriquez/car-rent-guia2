@@ -36,4 +36,20 @@ public class ClientesControlador {
     public List<Cliente> getClientes() {
         return listaClientes;
     }
+
+    public String calcularCuotas(String txtMonto, String txtCuotas) {
+        String cuotasString = "";
+        double montoTotal = txtMonto.isEmpty() ? 0 : Double.parseDouble(txtMonto.trim());
+        int cantidadCuotas = txtCuotas.isEmpty() ? 0 : Integer.parseInt(txtCuotas.trim());
+
+        double valorCuota = montoTotal / cantidadCuotas;
+        for (int i = 0; i < cantidadCuotas; i++) {
+            int numeroCuota = i + 1;
+            cuotasString = cuotasString.concat("Cuota numero: " + numeroCuota + " - Monto Cuota: " + valorCuota + "\n");
+            if (numeroCuota == cantidadCuotas) {
+                break;
+            }
+        }
+        return cuotasString;
+    }
 }

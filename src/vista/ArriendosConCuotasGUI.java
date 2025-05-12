@@ -4,7 +4,6 @@ import controlador.ClientesControlador;
 import modelo.Cliente;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import java.util.ArrayList;
 
 public class ArriendosConCuotasGUI extends JFrame {
@@ -33,9 +32,10 @@ public class ArriendosConCuotasGUI extends JFrame {
     private JLabel lblCuotas = new JLabel("Cantidad de cuotas:");
     private JTextField txtCuotas = new JTextField();
 
-    private JButton btnGuardar = new JButton("Guardar arriendo y mostrar cuotas >>");
+    private JButton btnCalcularCuotas = new JButton("mostrar cuotas");
+    private JButton btnGuardar = new JButton("Guardar arriendo");
 
-    private JLabel lblCuotasAPagar = new JLabel("CUOTAS A PAGAR");
+    private JLabel lblCuotasAPagar = new JLabel("Cuotas a pagar");
 
     private JTextArea areaCuotas = new JTextArea();
     private JScrollPane scrollCuotas = new JScrollPane(areaCuotas);
@@ -48,7 +48,7 @@ public class ArriendosConCuotasGUI extends JFrame {
 
     public ArriendosConCuotasGUI() {
         setTitle("Arriendos con cuotas");
-        setSize(750, 450);
+        setSize(900, 450);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
 
@@ -64,7 +64,7 @@ public class ArriendosConCuotasGUI extends JFrame {
         add(btnNuevoCliente);
 
         comboBoxAutomovil.setBounds(280, 60, 200, 25);
-        comboBoxAutomovil.addItem("Seleccione AUTOMOVIL");
+        comboBoxAutomovil.addItem("Seleccione automovil");
         add(comboBoxAutomovil);
 
         lblFecha.setBounds(50, 150, 100, 20);
@@ -106,13 +106,19 @@ public class ArriendosConCuotasGUI extends JFrame {
         add(lblCuotas);
         add(txtCuotas);
 
-        btnGuardar.setBounds(280, 180, 250, 25);
-        add(btnGuardar);
+        btnCalcularCuotas.setBounds(280, 180, 250, 25);
+        btnCalcularCuotas.addActionListener(el -> {
+            if (!txtCuotas.getText().isEmpty() && !txtPrecio.getText().isEmpty()) {
+                String cuotas = controlador.calcularCuotas(txtMonto.getText(), txtCuotas.getText());
+                areaCuotas.setText(cuotas);
+            }
+        });
+        add(btnCalcularCuotas);
 
         lblCuotasAPagar.setBounds(550, 50, 150, 25);
         add(lblCuotasAPagar);
 
-        scrollCuotas.setBounds(530, 80, 180, 200);
+        scrollCuotas.setBounds(530, 80, 350, 200);
         areaCuotas.setEditable(false);
         add(scrollCuotas);
 
@@ -139,6 +145,7 @@ public class ArriendosConCuotasGUI extends JFrame {
         ClientesGUI clientesGUI = new ClientesGUI(controlador, this);
         clientesGUI.setVisible(true);
     }
+
 
     private void mostrarMontoAPagar() {
         double precio = Double.parseDouble(txtPrecio.getText().isEmpty() ? "0" : txtPrecio.getText());
