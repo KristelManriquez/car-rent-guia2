@@ -81,6 +81,7 @@ public class ArriendosConCuotasGUI extends JFrame {
     private void abrirClientesGUI() {
         if (!clientesGUI.getIsOpen()){
             clientesGUI.setVisible(true);
+            clientesGUI.setOpen(true);
         }
     }
 
