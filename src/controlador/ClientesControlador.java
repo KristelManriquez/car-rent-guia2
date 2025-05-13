@@ -1,7 +1,9 @@
 // controlador/ClientesControlador.java
 package controlador;
 
+import modelo.ArriendoCuota;
 import modelo.Cliente;
+import modelo.DatosMockArriendoCuota;
 import vista.ClientesGUI;
 
 import java.util.ArrayList;
@@ -51,5 +53,12 @@ public class ClientesControlador {
             }
         }
         return cuotasString;
+    }
+
+//    public boolean guardarArriendo() {
+//    }
+
+    public List<ArriendoCuota> getArriendos() {
+        return DatosMockArriendoCuota.generarArriendosMock();
     }
 }

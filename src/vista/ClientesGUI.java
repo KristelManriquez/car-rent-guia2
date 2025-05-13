@@ -6,6 +6,8 @@ import modelo.Cliente;
 import javax.swing.*;
 
 public class ClientesGUI extends JFrame {
+    private boolean isOpen = false;
+
     private JLabel labelCedula = new JLabel("Cédula");
     private JTextField inputCedula = new JTextField();
     private JLabel labelNombre = new JLabel("Nombre");
@@ -15,7 +17,7 @@ public class ClientesGUI extends JFrame {
     private JButton botonAgregar = new JButton("Agregar");
     private JLabel titulo = new JLabel("Clientes");
 
-    public ClientesGUI(ClientesControlador controlador, ArriendosConCuotasGUI arriendoGUI) {
+    public ClientesGUI(ClientesControlador controlador, arriendos.ArriendosConCuotasGUI arriendoGUI) {
         controlador.setVista(this);
         setTitle(titulo.getText());
         setSize(350, 450);
@@ -57,8 +59,6 @@ public class ClientesGUI extends JFrame {
             arriendoGUI.actualizarClientes();
             this.dispose();
         });
-
-        setVisible(true);
     }
 
     public void mostrarMensaje(String mensaje) {
@@ -69,5 +69,18 @@ public class ClientesGUI extends JFrame {
         inputCedula.setText("");
         inputNombre.setText("");
         checkBoxEstaVigente.setSelected(false);
+    }
+
+    public boolean getIsOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
+
+    public void abrirClientesGUI(boolean isOpen) {
+        setVisible(isOpen);
+        setOpen(isOpen);
     }
 }

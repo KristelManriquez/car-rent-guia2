@@ -1,6 +1,6 @@
 package modelo;
 
-public class Cliente {
+public class    Cliente {
     private String cedula;
     private String nombre;
     private boolean vigente;
