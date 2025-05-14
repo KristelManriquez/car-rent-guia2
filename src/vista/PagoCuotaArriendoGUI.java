@@ -1,6 +1,7 @@
 package vista;
 
 import controlador.ClientesControlador;
+import modelo.Arriendo;
 import modelo.ArriendoCuota;
 import modelo.CuotaArriendo;
 
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PagoCuotaArriendoGUI extends JFrame {
@@ -106,7 +108,7 @@ public class PagoCuotaArriendoGUI extends JFrame {
         limpiarPanelPagos();
         comboClientes.removeAllItems();
 
-        List<ArriendoCuota> arriendos = clientesControlador.getArriendos();
+        List<ArriendoCuota> arriendos = new ArrayList<>(clientesControlador.getArriendos());
         for (ArriendoCuota arriendo : arriendos) {
             String cedula = arriendo.getCliente().getCedula();
             if (((DefaultComboBoxModel<String>) comboClientes.getModel()).getIndexOf(cedula) == -1) {
@@ -116,7 +118,7 @@ public class PagoCuotaArriendoGUI extends JFrame {
 
         if (comboClientes.getItemCount() > 0) {
             comboClientes.setSelectedIndex(0);
-            cargarArriendosDelCliente(comboClientes.getSelectedItem().toString());
+            cargarArriendosDelCliente((String) comboClientes.getSelectedItem());
         }
 
         setVisible(true);
@@ -125,10 +127,11 @@ public class PagoCuotaArriendoGUI extends JFrame {
 
     private void cargarArriendosDelCliente(String cedula) {
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
-        int index = 1;
-        for (ArriendoCuota arriendo : clientesControlador.getArriendos()) {
+        List<ArriendoCuota> arriendos = clientesControlador.getArriendos();
+        for (ArriendoCuota arriendo : arriendos) {
             if (arriendo.getCliente().getCedula().equals(cedula)) {
-                modeloLista.addElement("Arriendo " + index++);
+                modeloLista.addElement("Arriendo " + arriendo.getNumeroArriendo());
+                break;
             }
         }
         listaArriendos.setModel(modeloLista);

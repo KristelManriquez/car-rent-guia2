@@ -1,4 +1,4 @@
-package vista.arriendos;
+package vista.filters;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
