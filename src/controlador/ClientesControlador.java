@@ -1,23 +1,19 @@
-// controlador/ClientesControlador.java
 package controlador;
 
 import modelo.*;
+import modelo.mock.DatosMockArriendo;
 import modelo.mock.DatosMockVehiculo;
 import vista.ClientesGUI;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
-import static modelo.mock.DatosMockArriendoCuota.agregarArriendoMock;
 
 public class ClientesControlador {
     private Cliente cliente;
     private ClientesGUI vista;
     private final List<Cliente> listaClientes = modelo.mock.DatosMockCliente.obtenerClientes();
     private final List<Vehiculo> listaVehiculos = DatosMockVehiculo.generarVehiculosMock();
-
-    public ClientesControlador(ClientesGUI vista) {
-        this.vista = vista;
-    }
+    private DatosMockArriendo arriendos = new DatosMockArriendo();
 
     public ClientesControlador() {
     }
@@ -28,11 +24,11 @@ public class ClientesControlador {
 
     public void agregarCliente(Cliente cliente) {
         if (cliente.getCedula().isEmpty() || cliente.getNombre().isEmpty()) {
-            vista.mostrarMensaje("Por favor, complete todos los campos.");
+            vista.mostrarMensaje("Por favor, complete todos los campos.", 'i');
             return;
         }
         listaClientes.add(cliente);
-        vista.mostrarMensaje("Cliente agregado con éxito.");
+        vista.mostrarMensaje("Cliente agregado con éxito.", 'i');
         vista.limpiarFormulario();
     }
 
@@ -57,19 +53,27 @@ public class ClientesControlador {
     }
 
     public boolean guardarArriendo(int dias, int valorDiario, int cantCuotas, Cliente cliente, Vehiculo vehiculo) {
-        if (vehiculo.getCondicion() == 'D') {
-            agregarArriendoMock(dias, valorDiario, cantCuotas, cliente, vehiculo);
-            vista.mostrarMensaje("El vehiculo a sido arrendado correctamente!");
-            vehiculo.setCondicion('A');
-            return true;
-        } else {
-            vista.mostrarMensaje("El vehiculo no puede ser arrendado");
+        if (!cliente.isVigente()) {
+            vista.mostrarMensaje("El cliente no se encuentra vigente.", 'a');
             return false;
         }
+
+        if (vehiculo.getCondicion() == 'D' && cliente.isVigente()) {
+            arriendos.agregarArriendoMock(LocalDateTime.now().toString(), dias, valorDiario, cantCuotas, cliente, vehiculo);
+            vista.mostrarMensaje("El vehiculo a sido arrendado correctamente!", 'i');
+            vehiculo.setCondicion('A');
+            cliente.setVigente(false);
+            return true;
+        } else {
+            if (vehiculo.getCondicion() != 'D') {
+                vista.mostrarMensaje("El vehiculo no puede ser arrendado", 'a');
+            }
+        }
+        return false;
     }
 
-    public List<ArriendoCuota> getArriendos() {
-        return modelo.mock.DatosMockArriendoCuota.generarArriendosMock();
+    public List<Arriendo> getArriendos() {
+        return arriendos.getLista();
     }
 
     public List<Vehiculo> getVehiculos() {
@@ -92,5 +96,15 @@ public class ClientesControlador {
             }
         }
         return null;
+    }
+
+    public void pagarCuotasArriendo(String cedula, int indexCuota) {
+        List<Arriendo> arriendosList = arriendos.getLista();
+        for (Arriendo arriendo : arriendosList) {
+            if (arriendo.getArriendoCuota().getCliente().getCedula().equals(cedula)) {
+                ArriendoCuota arriendoCuotas = arriendo.getArriendoCuota();
+                arriendoCuotas.pagarCuota(indexCuota);
+            }
+        }
     }
 }

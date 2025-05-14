@@ -1,4 +1,4 @@
-package vista;
+package vista.arriendos;
 
 import javax.swing.*;
 import java.awt.*;

@@ -19,6 +19,6 @@ public abstract class DocumentListenerCustom implements DocumentListener {
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-    } // ignorado
+    }
 }
 

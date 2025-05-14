@@ -1,10 +1,8 @@
 package vista.filters;
 
-import javax.management.monitor.StringMonitorMBean;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import java.util.logging.SimpleFormatter;
 
 public class RutSimpleFormatter extends DocumentFilter {
     @Override
