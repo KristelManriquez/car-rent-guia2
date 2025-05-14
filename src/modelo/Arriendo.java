@@ -4,6 +4,7 @@ public class Arriendo {
     private int numeroArriendo;
     private String fechaArriendo;
     private int diasArriendo;
+    private ArriendoCuota arriendoCuota;
 
     public Arriendo(int numeroArriendo, String fechaArriendo, int diasArriendo) {
         this.numeroArriendo = numeroArriendo;
@@ -35,17 +36,12 @@ public class Arriendo {
         this.diasArriendo = diasArriendo;
     }
 
-    @Override
-    public String toString() {
-        return "Arriendo{" +
-                "numeroArriendo=" + numeroArriendo +
-                ", fechaArriendo='" + fechaArriendo + '\'' +
-                ", diasArriendo=" + diasArriendo +
-                '}';
+    public ArriendoCuota getArriendoCuota() {
+        return arriendoCuota;
     }
 
-    public void crearArriendo() {
-
+    public void setArriendoCuota(ArriendoCuota arriendoCuota) {
+        this.arriendoCuota = arriendoCuota;
     }
 
     public int obtenerMontoAPagar(int precioPorDia) {
@@ -54,5 +50,14 @@ public class Arriendo {
 
     public boolean evaluarArriendo(Cliente cliente, Vehiculo vehiculo) {
         return cliente.isVigente() && vehiculo.getCondicion() == 'D';
+    }
+
+    @Override
+    public String toString() {
+        return "Arriendo{" +
+                "numeroArriendo=" + numeroArriendo +
+                ", fechaArriendo='" + fechaArriendo + '\'' +
+                ", diasArriendo=" + diasArriendo +
+                '}';
     }
 }

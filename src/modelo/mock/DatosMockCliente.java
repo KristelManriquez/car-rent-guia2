@@ -9,7 +9,6 @@ public class DatosMockCliente {
     private static final List<Cliente> clientes = new ArrayList<>();
 
     static {
-        // Inicializamos con datos de ejemplo
         clientes.add(new Cliente("11111111-1", "Juan Pérez", false));
         clientes.add(new Cliente("22222222-2", "Ana López", false));
         clientes.add(new Cliente("33333333-3", "Carla Pérez", true));
@@ -18,7 +17,7 @@ public class DatosMockCliente {
     }
 
     public static List<Cliente> obtenerClientes() {
-        return new ArrayList<>(clientes); // se devuelve una copia para seguridad
+        return new ArrayList<>(clientes);
     }
 
     public static void agregarCliente(Cliente nuevo) {

@@ -1,4 +1,4 @@
-package vista;
+package vista.arriendos;
 
 import vista.filters.DocumentListenerCustom;
 
@@ -42,7 +42,6 @@ public class PanelDatosArriendo extends JPanel {
         gbc.gridy = row;
         add(btnCalcularCuotas, gbc);
 
-        // Detectar cambios en días o precio
         DocumentListenerCustom listener = new DocumentListenerCustom() {
             public void onChange() {
                 onDatosCambiados.run();

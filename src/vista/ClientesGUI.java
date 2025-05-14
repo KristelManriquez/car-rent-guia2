@@ -2,23 +2,22 @@ package vista;
 
 import controlador.ClientesControlador;
 import modelo.Cliente;
+import utils.CedulaValidador;
+import utils.UtilMensaje;
 import vista.filters.RutSimpleFormatter;
 
 import javax.swing.*;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class ClientesGUI extends JFrame {
-    private boolean isOpen = false;
 
     private final JTextField inputCedula = new JTextField(15);
     private final JTextField inputNombre = new JTextField(15);
     private final JCheckBox checkBoxEstaVigente = new JCheckBox("Vigente");
     private final JButton botonAgregar = new JButton("Agregar");
 
-    public ClientesGUI(ClientesControlador controlador, arriendos.ArriendosConCuotasGUI arriendoGUI) {
+    public ClientesGUI(ClientesControlador controlador) {
         controlador.setVista(this);
         setTitle("Clientes");
         setSize(350, 300);
@@ -76,40 +75,29 @@ public class ClientesGUI extends JFrame {
 
         // Acción del botón
         botonAgregar.addActionListener(e -> {
-            Cliente cliente = new Cliente();
-            cliente.setCedula(inputCedula.getText());
-            cliente.setNombre(inputNombre.getText());
-            cliente.setVigente(checkBoxEstaVigente.isSelected());
-            controlador.agregarCliente(cliente);
-            arriendoGUI.actualizarClientes();
+            if (CedulaValidador.validarCedula(inputCedula.getText())) {
+                Cliente cliente = new Cliente();
+                cliente.setCedula(inputCedula.getText());
+                cliente.setNombre(inputNombre.getText());
+                cliente.setVigente(checkBoxEstaVigente.isSelected());
+                controlador.agregarCliente(cliente);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Numero de cedula no valido");
+            }
         });
 
         add(panel);
-
-        // Evento cerrar
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                setOpen(false);
-            }
-        });
     }
 
-    public void mostrarMensaje(String mensaje) {
-        JOptionPane.showMessageDialog(this, mensaje);
+    public void mostrarMensaje(String mensaje, char tipo) {
+        JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje(mensaje, tipo));
+
     }
 
     public void limpiarFormulario() {
         inputCedula.setText("");
         inputNombre.setText("");
         checkBoxEstaVigente.setSelected(false);
-    }
-
-    public boolean getIsOpen() {
-        return isOpen;
-    }
-
-    public void setOpen(boolean open) {
-        isOpen = open;
     }
 }

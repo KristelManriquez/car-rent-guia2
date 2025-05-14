@@ -1,39 +1,34 @@
-package arriendos;
+package vista.arriendos;
 
 import controlador.ClientesControlador;
 import modelo.Cliente;
 import modelo.Vehiculo;
+import utils.UtilMensaje;
 import vista.*;
-import vista.PanelCliente;
-import vista.PanelCuotasSimuladas;
-import vista.PanelDatosArriendo;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ArriendosConCuotasGUI extends JFrame {
-    private final ClientesControlador controlador = new ClientesControlador();
+    private final ClientesControlador controlador;
     private final PanelCliente panelCliente;
     private final PanelDatosArriendo panelDatos;
     private final PanelCuotasSimuladas panelCuotas;
-    private final JButton btnVerArriendos = new JButton("Ver arriendos");
 
-    private final ClientesGUI clientesGUI = new ClientesGUI(controlador, this);
     private final PagoCuotaArriendoGUI pagoCuotaArriendoGUI = new PagoCuotaArriendoGUI();
 
-    public ArriendosConCuotasGUI() {
+    public ArriendosConCuotasGUI(ClientesControlador controlador) {
         super("Arriendos con cuotas");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.controlador = controlador;
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(900, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Paneles
-        panelCliente = new vista.PanelCliente(controlador, this::abrirClientesGUI);
+        panelCliente = new PanelCliente(controlador);
         panelDatos = new PanelDatosArriendo(this::mostrarMontoAPagar);
         panelCuotas = new PanelCuotasSimuladas();
 
-        // Panel izquierdo: cliente + datos
         JPanel panelIzquierdo = new JPanel();
         panelIzquierdo.setLayout(new BoxLayout(panelIzquierdo, BoxLayout.Y_AXIS));
         panelIzquierdo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // margen interno
@@ -41,10 +36,8 @@ public class ArriendosConCuotasGUI extends JFrame {
         panelIzquierdo.add(Box.createVerticalStrut(15));
         panelIzquierdo.add(panelDatos);
 
-        // Panel derecho: cuotas
         panelCuotas.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // margen interno
 
-        // SplitPane
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
                 panelIzquierdo,
@@ -55,40 +48,15 @@ public class ArriendosConCuotasGUI extends JFrame {
         splitPane.setContinuousLayout(true);
         splitPane.setBorder(null);
 
-        // Panel inferior
         JPanel sur = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        btnVerArriendos.setBackground(new Color(52, 152, 219)); // azul
-        btnVerArriendos.setContentAreaFilled(true); // necesario para mostrar color de fondo
-        btnVerArriendos.setBorderPainted(false); // opcional, quita borde si quieres estilo plano
-        btnVerArriendos.setForeground(Color.BLACK); // texto amarillo
-        btnVerArriendos.addActionListener(e -> {
-            if (!pagoCuotaArriendoGUI.isOpen()) {
-                mostrarArriendosGUI();
-            }
-        });
-        sur.add(btnVerArriendos);
 
-        // Agregar todo al frame
         add(splitPane, BorderLayout.CENTER);
         add(sur, BorderLayout.SOUTH);
 
-        // Eventos
         panelDatos.btnCalcularCuotas.addActionListener(e -> calcularCuotas());
         panelCuotas.btnGuardarArriendo.addActionListener(e -> guardarArriendo());
 
         pagoCuotaArriendoGUI.setClientesControlador(controlador);
-        setVisible(true);
-    }
-
-    private void abrirClientesGUI() {
-        if (!clientesGUI.getIsOpen()) {
-            clientesGUI.setVisible(true);
-            clientesGUI.setOpen(true);
-        }
-    }
-
-    public void actualizarClientes() {
-        panelCliente.cargarCombo(controlador.getClientes(), panelCliente.getComboClientes());
     }
 
     private void mostrarMontoAPagar() {
@@ -108,18 +76,18 @@ public class ArriendosConCuotasGUI extends JFrame {
             String cuotas = controlador.calcularCuotas(panelDatos.txtMonto.getText(), panelDatos.txtCuotas.getText());
             panelCuotas.areaCuotas.setText(cuotas);
         } else {
-            JOptionPane.showMessageDialog(this, "Debe ingresar las cuotas para realizar el cálculo");
+            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("Debe ingresar las cuotas para realizar el cálculo", 'i'));
         }
     }
 
     private boolean validarCuotas() {
         if (panelDatos.txtCuotas.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Ingrese las cuotas");
+            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("Ingrese las cuotas", 'i'));
             return true;
         }
-        if (Integer.parseInt(panelDatos.txtCuotas.getText()) > 12) {
-            panelDatos.txtCuotas.setText("12");
-            JOptionPane.showMessageDialog(null, "Las cuotas no pueden ser mayor a 12");
+        if (Integer.parseInt(panelDatos.txtCuotas.getText()) > 6) {
+            panelDatos.txtCuotas.setText("6");
+            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("Las cuotas no pueden ser mayor a 6", 'i'));
             return true;
         }
         return false;
@@ -135,16 +103,22 @@ public class ArriendosConCuotasGUI extends JFrame {
             String[] vehiculoSplit = panelCliente.obtenerVehiculoSeleccionado().split("-");
             Vehiculo vehiculo = controlador.encontrarVehiculo(vehiculoSplit[0].trim());
             if (controlador.guardarArriendo(dias, valorDiario, cuotas, cliente, vehiculo)){
-                JOptionPane.showMessageDialog(this, "Arriendo guardado!");
+                limpiarForm();
+                updateCombos();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar el cliente");
+            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("Las cuotas no pueden ser mayor a 12", 'e'));
         }
     }
 
-    private void mostrarArriendosGUI() {
-        pagoCuotaArriendoGUI.MostrarPagoCuotaArriendoGUI();
-        pagoCuotaArriendoGUI.setOpen(true);
-        pagoCuotaArriendoGUI.limpiarPanelPagos();
+    private void limpiarForm() {
+        panelDatos.txtCuotas.setText("");
+        panelDatos.txtPrecio.setText("");
+        panelDatos.txtDias.setText("");
+        panelCuotas.areaCuotas.setText("");
+    }
+
+    public void updateCombos() {
+        panelCliente.actualizarCombos(controlador);
     }
 }

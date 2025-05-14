@@ -2,27 +2,20 @@ package vista;
 
 import controlador.ClientesControlador;
 import modelo.Arriendo;
-import modelo.ArriendoCuota;
 import modelo.CuotaArriendo;
+import utils.UtilMensaje;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PagoCuotaArriendoGUI extends JFrame {
 
-    private boolean isOpen = false;
-
-    private JComboBox<String> comboClientes;
-    private JList<String> listaArriendos;
-    private JButton botonMostrarPagos;
-    private JButton botonRealizarPago;
-    private JPanel panelFilas;
-    private JScrollPane scrollPagos;
+    private final JComboBox<String> comboClientes;
+    private final JList<String> listaArriendos;
+    private final JPanel panelFilas;
 
     private ClientesControlador clientesControlador;
 
@@ -33,7 +26,6 @@ public class PagoCuotaArriendoGUI extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        // PANEL IZQUIERDO
         JPanel panelIzquierdo = new JPanel(new GridBagLayout());
         panelIzquierdo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         GridBagConstraints gbc = new GridBagConstraints();
@@ -42,7 +34,6 @@ public class PagoCuotaArriendoGUI extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
 
-        // ComboBox clientes
         gbc.gridy = 0;
         comboClientes = new JComboBox<>();
         comboClientes.addItemListener(el -> {
@@ -52,24 +43,20 @@ public class PagoCuotaArriendoGUI extends JFrame {
         });
         panelIzquierdo.add(comboClientes, gbc);
 
-        // Etiqueta
         gbc.gridy++;
         panelIzquierdo.add(new JLabel("Seleccione arriendo:"), gbc);
 
-        // Lista de arriendos
         gbc.gridy++;
         listaArriendos = new JList<>();
         JScrollPane scrollArriendo = new JScrollPane(listaArriendos);
         scrollArriendo.setPreferredSize(new Dimension(150, 100));
         panelIzquierdo.add(scrollArriendo, gbc);
 
-        // Botón mostrar pagos
         gbc.gridy++;
-        botonMostrarPagos = new JButton("Mostrar pagos de cliente");
+        JButton botonMostrarPagos = new JButton("Mostrar pagos de cliente");
         botonMostrarPagos.addActionListener(e -> cargarCuotasArriendo());
         panelIzquierdo.add(botonMostrarPagos, gbc);
 
-        // PANEL DERECHO
         JPanel panelDerecho = new JPanel(new BorderLayout(5, 5));
         panelDerecho.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JLabel lblPagos = new JLabel("P  A  G  O  S", SwingConstants.CENTER);
@@ -78,39 +65,30 @@ public class PagoCuotaArriendoGUI extends JFrame {
 
         panelFilas = new JPanel();
         panelFilas.setLayout(new BoxLayout(panelFilas, BoxLayout.Y_AXIS));
-        scrollPagos = new JScrollPane(panelFilas);
+        JScrollPane scrollPagos = new JScrollPane(panelFilas);
         panelDerecho.add(scrollPagos, BorderLayout.CENTER);
 
-        botonRealizarPago = new JButton("Realizar Pago");
+        JButton botonRealizarPago = new JButton("Realizar Pago");
         botonRealizarPago.setAlignmentX(Component.CENTER_ALIGNMENT);
+        botonRealizarPago.addActionListener(el -> pagarCuotas());
         panelDerecho.add(botonRealizarPago, BorderLayout.SOUTH);
 
-        // AGREGAR A LA VENTANA
         add(panelIzquierdo, BorderLayout.WEST);
         add(panelDerecho, BorderLayout.CENTER);
-
-        // Evento cerrar
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                setVisible(false);
-                setOpen(false);
-            }
-        });
     }
 
     public void MostrarPagoCuotaArriendoGUI() {
         if (clientesControlador == null) {
-            JOptionPane.showMessageDialog(this, "Controlador no asignado.");
+            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("Controlador no asignado.", 'i'));
             return;
         }
 
         limpiarPanelPagos();
         comboClientes.removeAllItems();
 
-        List<ArriendoCuota> arriendos = new ArrayList<>(clientesControlador.getArriendos());
-        for (ArriendoCuota arriendo : arriendos) {
-            String cedula = arriendo.getCliente().getCedula();
+        List<Arriendo> arriendos = new ArrayList<>(clientesControlador.getArriendos());
+        for (Arriendo arriendo : arriendos) {
+            String cedula = arriendo.getArriendoCuota().getCliente().getCedula();
             if (((DefaultComboBoxModel<String>) comboClientes.getModel()).getIndexOf(cedula) == -1) {
                 comboClientes.addItem(cedula);
             }
@@ -120,16 +98,13 @@ public class PagoCuotaArriendoGUI extends JFrame {
             comboClientes.setSelectedIndex(0);
             cargarArriendosDelCliente((String) comboClientes.getSelectedItem());
         }
-
-        setVisible(true);
-        setOpen(true);
     }
 
     private void cargarArriendosDelCliente(String cedula) {
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
-        List<ArriendoCuota> arriendos = clientesControlador.getArriendos();
-        for (ArriendoCuota arriendo : arriendos) {
-            if (arriendo.getCliente().getCedula().equals(cedula)) {
+        List<Arriendo> arriendos = clientesControlador.getArriendos();
+        for (Arriendo arriendo : arriendos) {
+            if (arriendo.getArriendoCuota().getCliente().getCedula().equals(cedula)) {
                 modeloLista.addElement("Arriendo " + arriendo.getNumeroArriendo());
                 break;
             }
@@ -142,15 +117,15 @@ public class PagoCuotaArriendoGUI extends JFrame {
         String selectedArriendo = listaArriendos.getSelectedValue();
 
         if (selectedCliente == null || selectedArriendo == null) {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente y un arriendo");
+            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("Seleccione un cliente y un arriendo", 'i'));
             return;
         }
 
         limpiarPanelPagos();
 
-        for (ArriendoCuota arriendo : clientesControlador.getArriendos()) {
-            if (arriendo.getCliente().getCedula().equals(selectedCliente)) {
-                List<CuotaArriendo> cuotas = arriendo.getListaCuotas();
+        for (Arriendo arriendo : clientesControlador.getArriendos()) {
+            if (arriendo.getArriendoCuota().getCliente().getCedula().equals(selectedCliente)) {
+                List<CuotaArriendo> cuotas = arriendo.getArriendoCuota().getListaCuotas();
                 for (CuotaArriendo cuota : cuotas) {
                     panelFilas.add(getJPanel(cuota));
                 }
@@ -166,14 +141,42 @@ public class PagoCuotaArriendoGUI extends JFrame {
         JPanel fila = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JCheckBox check = new JCheckBox();
         check.setEnabled(!cuota.isFuePagada());
-        JLabel label = new JLabel("Cuota " + cuota.getNumeroCuotas() +
-                " – $" + cuota.getValorCuota() + " " +
+        JLabel label = new JLabel("Cuota 🐍" + cuota.getNumeroCuotas() +
+                " – $" + cuota.getValorCuota() + " - " +
                 (cuota.isFuePagada() ? "✅" : "⏳"));
         fila.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
         fila.add(check);
         fila.add(label);
         return fila;
     }
+
+    private void pagarCuotas() {
+        try {
+            Component[] filas = panelFilas.getComponents();
+            int index = 1;
+
+            for (Component filaComponent : filas) {
+                if (filaComponent instanceof JPanel fila) {
+                    for (Component comp : fila.getComponents()) {
+                        if (comp instanceof JCheckBox check && check.isSelected()) {
+                            clientesControlador.pagarCuotasArriendo(
+                                    (String) comboClientes.getSelectedItem(),
+                                    index
+                            );
+                            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("La cuota " + index + " ha sido pagada!", 'e'));
+                            check.setEnabled(false);
+                            check.setSelected(false);
+                        }
+                    }
+                }
+                index++;
+                cargarCuotasArriendo();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, UtilMensaje.mostrarMensaje("La cuota no pudo ser pagada", 'e'));
+        }
+    }
+
 
     public void limpiarPanelPagos() {
         panelFilas.removeAll();
@@ -183,13 +186,5 @@ public class PagoCuotaArriendoGUI extends JFrame {
 
     public void setClientesControlador(ClientesControlador clientesControlador) {
         this.clientesControlador = clientesControlador;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    public void setOpen(boolean open) {
-        isOpen = open;
     }
 }

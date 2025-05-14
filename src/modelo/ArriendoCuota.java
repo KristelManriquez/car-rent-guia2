@@ -3,17 +3,13 @@ package modelo;
 import java.util.ArrayList;
 
 public class ArriendoCuota {
-    private int numeroArriendo;
-    private int dias;
     private int precioDia;
     private int cantidadCuotas;
-    private Cliente cliente;        // clase Cliente
-    private Vehiculo vehiculo;      // clase Vehiculo
+    private Cliente cliente;
+    private Vehiculo vehiculo;
     private ArrayList<CuotaArriendo> listaCuotas;
 
-    public ArriendoCuota(int numeroArriendo, int dias, int precioDia, int cantidadCuotas, Cliente cliente, Vehiculo vehiculo) {
-        this.numeroArriendo = numeroArriendo;
-        this.dias = dias;
+    public ArriendoCuota(int precioDia, int cantidadCuotas, Cliente cliente, Vehiculo vehiculo) {
         this.precioDia = precioDia;
         this.cantidadCuotas = cantidadCuotas;
         this.cliente = cliente;
@@ -21,78 +17,18 @@ public class ArriendoCuota {
         this.listaCuotas = new ArrayList<>();
     }
 
-    public ArriendoCuota() {
+    public int obtenerMontoPagar(int diasArriendo) {
+        return diasArriendo * precioDia;
     }
 
-    public int getNumeroArriendo() {
-        return numeroArriendo;
-    }
-
-    public void setNumeroArriendo(int numeroArriendo) {
-        this.numeroArriendo = numeroArriendo;
-    }
-
-    public int getDias() {
-        return dias;
-    }
-
-    public void setDias(int dias) {
-        this.dias = dias;
-    }
-
-    public int getPrecioDia() {
-        return precioDia;
-    }
-
-    public void setPrecioDia(int precioDia) {
-        this.precioDia = precioDia;
-    }
-
-    public int getCantidadCuotas() {
-        return cantidadCuotas;
-    }
-
-    public void setCantidadCuotas(int cantidadCuotas) {
-        this.cantidadCuotas = cantidadCuotas;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public Vehiculo getVehiculo() {
-        return vehiculo;
-    }
-
-    public void setVehiculo(Vehiculo vehiculo) {
-        this.vehiculo = vehiculo;
-    }
-
-    public ArrayList<CuotaArriendo> getListaCuotas() {
-        return listaCuotas;
-    }
-
-    public void setListaCuotas(ArrayList<CuotaArriendo> listaCuotas) {
-        this.listaCuotas = listaCuotas;
-    }
-
-    public int obtenerMontoPagar() {
-        return dias * precioDia;
-    }
-
-    public boolean evaluarArriendo() {
+    public boolean evaluarArriendo(Cliente cliente, Vehiculo vehiculo) {
         return cliente.isVigente() && vehiculo.getCondicion() == 'D';
     }
 
-    public ArrayList<CuotaArriendo> generarCuotas() {
+    public ArrayList<CuotaArriendo> generarCuotas(int montoTotal) {
         ArrayList<CuotaArriendo> cuotasGeneradas = new ArrayList<>();
-        int total = obtenerMontoPagar();
-        int montoBase = total / cantidadCuotas;
-        int resto = total % cantidadCuotas;
+        int montoBase = montoTotal / cantidadCuotas;
+        int resto = montoTotal % cantidadCuotas;
 
         for (int i = 1; i <= cantidadCuotas; i++) {
             int monto = montoBase;
@@ -103,23 +39,35 @@ public class ArriendoCuota {
         return cuotasGeneradas;
     }
 
-    public boolean ingresarArriendoConCuota() {
-        if (evaluarArriendo()) {
-            vehiculo.setCondicion('A'); // Arrendado
-            listaCuotas = generarCuotas(); // relación compuesta
+    public boolean ingresarArriendoConCuota(Arriendo arriendo) {
+        if (evaluarArriendo(cliente, vehiculo)) {
+            int monto = obtenerMontoPagar(arriendo.getDiasArriendo());
+            listaCuotas = generarCuotas(monto);
+            vehiculo.setCondicion('A');
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public boolean pagarCuota(int numeroCuota) {
         for (CuotaArriendo c : listaCuotas) {
-            if (c.getNumeroCuotas() == numeroCuota) {
+            if (c.getNumeroCuotas() == numeroCuota && !c.isFuePagada()) {
                 c.setFuePagada(true);
                 return true;
             }
         }
         return false;
+    }
+
+    public ArrayList<CuotaArriendo> getListaCuotas() {
+        return listaCuotas;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public Vehiculo getVehiculo() {
+        return vehiculo;
     }
 }
