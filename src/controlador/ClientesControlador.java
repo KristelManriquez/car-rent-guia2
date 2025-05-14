@@ -1,18 +1,19 @@
 // controlador/ClientesControlador.java
 package controlador;
 
-import modelo.ArriendoCuota;
-import modelo.Cliente;
-import modelo.DatosMockArriendoCuota;
+import modelo.*;
+import modelo.mock.DatosMockVehiculo;
 import vista.ClientesGUI;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static modelo.mock.DatosMockArriendoCuota.agregarArriendoMock;
 
 public class ClientesControlador {
     private Cliente cliente;
     private ClientesGUI vista;
-    private List<Cliente> listaClientes = new ArrayList<>();
+    private final List<Cliente> listaClientes = modelo.mock.DatosMockCliente.obtenerClientes();
+    private final List<Vehiculo> listaVehiculos = DatosMockVehiculo.generarVehiculosMock();
 
     public ClientesControlador(ClientesGUI vista) {
         this.vista = vista;
@@ -55,10 +56,41 @@ public class ClientesControlador {
         return cuotasString;
     }
 
-//    public boolean guardarArriendo() {
-//    }
+    public boolean guardarArriendo(int dias, int valorDiario, int cantCuotas, Cliente cliente, Vehiculo vehiculo) {
+        if (vehiculo.getCondicion() == 'D') {
+            agregarArriendoMock(dias, valorDiario, cantCuotas, cliente, vehiculo);
+            vista.mostrarMensaje("El vehiculo a sido arrendado correctamente!");
+            vehiculo.setCondicion('A');
+            return true;
+        } else {
+            vista.mostrarMensaje("El vehiculo no puede ser arrendado");
+            return false;
+        }
+    }
 
     public List<ArriendoCuota> getArriendos() {
-        return DatosMockArriendoCuota.generarArriendosMock();
+        return modelo.mock.DatosMockArriendoCuota.generarArriendosMock();
+    }
+
+    public List<Vehiculo> getVehiculos() {
+        return listaVehiculos;
+    }
+
+    public Cliente encontrarCliente(String clienteRut) {
+        for (Cliente cliente : listaClientes) {
+            if (cliente.getCedula().equals(clienteRut)) {
+                return cliente;
+            }
+        }
+        return null;
+    }
+
+    public Vehiculo encontrarVehiculo(String patente) {
+        for (Vehiculo vehiculo : listaVehiculos) {
+            if (vehiculo.getPatente().equals(patente)) {
+                return vehiculo;
+            }
+        }
+        return null;
     }
 }

@@ -1,6 +1,8 @@
 package arriendos;
 
 import controlador.ClientesControlador;
+import modelo.Cliente;
+import modelo.Vehiculo;
 import vista.*;
 import vista.PanelCliente;
 import vista.PanelCuotasSimuladas;
@@ -22,7 +24,7 @@ public class ArriendosConCuotasGUI extends JFrame {
     public ArriendosConCuotasGUI() {
         super("Arriendos con cuotas");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(900, 450);
+        setSize(900, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -79,14 +81,14 @@ public class ArriendosConCuotasGUI extends JFrame {
     }
 
     private void abrirClientesGUI() {
-        if (!clientesGUI.getIsOpen()){
+        if (!clientesGUI.getIsOpen()) {
             clientesGUI.setVisible(true);
             clientesGUI.setOpen(true);
         }
     }
 
     public void actualizarClientes() {
-        panelCliente.cargarClientes(controlador.getClientes());
+        panelCliente.cargarCombo(controlador.getClientes(), panelCliente.getComboClientes());
     }
 
     private void mostrarMontoAPagar() {
@@ -101,6 +103,7 @@ public class ArriendosConCuotasGUI extends JFrame {
     }
 
     private void calcularCuotas() {
+        if (validarCuotas()) return;
         if (!panelDatos.txtCuotas.getText().isEmpty() && !panelDatos.txtPrecio.getText().isEmpty()) {
             String cuotas = controlador.calcularCuotas(panelDatos.txtMonto.getText(), panelDatos.txtCuotas.getText());
             panelCuotas.areaCuotas.setText(cuotas);
@@ -109,8 +112,34 @@ public class ArriendosConCuotasGUI extends JFrame {
         }
     }
 
+    private boolean validarCuotas() {
+        if (panelDatos.txtCuotas.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Ingrese las cuotas");
+            return true;
+        }
+        if (Integer.parseInt(panelDatos.txtCuotas.getText()) > 12) {
+            panelDatos.txtCuotas.setText("12");
+            JOptionPane.showMessageDialog(null, "Las cuotas no pueden ser mayor a 12");
+            return true;
+        }
+        return false;
+    }
+
     private void guardarArriendo() {
-        JOptionPane.showMessageDialog(this, "Arriendo guardado (simulado)");
+        try {
+            int dias = Integer.parseInt(panelDatos.txtDias.getText());
+            int valorDiario = Integer.parseInt(panelDatos.txtPrecio.getText());
+            int cuotas = Integer.parseInt(panelDatos.txtCuotas.getText());
+            String[] clienteSplit = panelCliente.obtenerClienteSeleccionado().split("-", 2);
+            Cliente cliente = controlador.encontrarCliente(clienteSplit[1].trim());
+            String[] vehiculoSplit = panelCliente.obtenerVehiculoSeleccionado().split("-");
+            Vehiculo vehiculo = controlador.encontrarVehiculo(vehiculoSplit[0].trim());
+            if (controlador.guardarArriendo(dias, valorDiario, cuotas, cliente, vehiculo)){
+                JOptionPane.showMessageDialog(this, "Arriendo guardado!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al guardar el cliente");
+        }
     }
 
     private void mostrarArriendosGUI() {

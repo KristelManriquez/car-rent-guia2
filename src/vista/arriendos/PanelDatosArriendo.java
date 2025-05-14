@@ -1,6 +1,6 @@
 package vista;
 
-import vista.arriendos.DocumentListenerCustom;
+import vista.filters.DocumentListenerCustom;
 
 import javax.swing.*;
 import java.awt.*;

@@ -2,8 +2,10 @@ package vista;
 
 import controlador.ClientesControlador;
 import modelo.Cliente;
+import vista.filters.RutSimpleFormatter;
 
 import javax.swing.*;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -46,6 +48,8 @@ public class ClientesGUI extends JFrame {
         panel.add(new JLabel("Cédula:"), gbc);
 
         gbc.gridx = 1;
+        PlainDocument doc = (PlainDocument) inputCedula.getDocument();
+        doc.setDocumentFilter(new RutSimpleFormatter());
         panel.add(inputCedula, gbc);
 
         // Nombre
